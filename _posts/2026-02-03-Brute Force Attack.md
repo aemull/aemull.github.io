@@ -18,21 +18,21 @@ Mencoba Menebak password atau pin seperti diatas sudah termasuk kedalam serangan
 
 ## Percobaan Brute Force Attack Di DVWA
 
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_1.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_1.png)
 
 Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password. selanjutnya kita akan mecoba setiap level untuk melihat celah keamananya
 
 untuk tampilan jika gagal login seperti berikutS
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_4.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_4.png)
 untuk tampilan jika berhasil login seperti berikut
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_5.png)
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_6.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_5.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_6.png)
 untuk tools yang digunakan adalah Burpsuite yang nanti nya akan melakukan input otomatis username dan password kedalam webnya. selain itu harus menyiapkan daftar kata (wordlist) password dan user yang akan dimasukan ke form login
 
 wordlist user
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_2.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_2.png)
 wordlist password
-![tampilan modul brute force](image/2026-02-03-Brute_Force_Attack/image_3.png)
+![tampilan modul brute force](/image/2026-02-03-Brute_Force_Attack/image_3.png)
 untuk cara kerjanya nanti burpsuite akan 
 
 #### Bruter Force Level : Low
