@@ -14,16 +14,34 @@ tags: [brute force, cyber security, red team]
 
 Kurang lebih seperti saat kita ingin login ke google tapi lupa kata sandinya. Disitu kita akan mencoba berbagai kemungkinan password yang bener, mulai dari mencoba input tanggal lahir, alamat, kombinasi tanggal lahir sama nama, kombinasi nama presiden dan mentri, semua kombinasi kalimat yang ada di kepala kita dicoba sampai bisa login.
 
-Mencoba Menebak password atau pin seperti diatas sudah termasuk kedalam serangan brute force, tapi untuk para peretas biasanya menggunakan tools otomatis agar bisa melakukan input ratusan ribu hingga jutaan kombinasi kalimat dalam waktu yang cepat. Kalau misal peretas itu berhasil menebak password, maka selamat akun bisa diambil alih oleh peretas.
+Mencoba Menebak password atau pin seperti diatas sudah termasuk kedalam serangan brute force, tapi untuk para peretas biasanya menggunakan tools otomatis agar bisa melakukan input ratusan ribu hingga jutaan kombinasi kalimat dalam waktu yang cepat. Kalau misal peretas itu berhasil menebak password, maka peretas bisa masuk menggunakan akun tersebut dan bisa juga menganmbil alih akun tersebut (*akunnya dicuri*).
 
 ## Percobaan Brute Force Attack Di DVWA
 
-![tampilan modul brute force](aemull.github.io/assets/lib/2026-02-03-Brute Force Attcak/image 1.png)
+![tampilan modul brute force]("/assets/lib/2026-02-03-Brute Force Attcak/image 1.png")
 
-Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password saja. untuk tampilan normanya seperti berikut
+Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password. selanjutnya kita akan mecoba setiap level untuk melihat celah keamananya
 
-Dan saat kita berhasil login, makal tampilannya akan seperti berikut
+untuk tampilan jika gagal login seperti berikut
+![tampilan modul brute force]("/assets/lib/2026-02-03-Brute Force Attcak/image 4.png")
 
-`CATATAN :
-user name yang valid adalah admin dan passwor dayang 
+untuk tampilan jika berhasil login seperti berikut
+![tampilan modul brute force]("/assets/lib/2026-02-03-Brute Force Attcak/image 5.png")
+![tampilan modul brute force]("/assets/lib/2026-02-03-Brute Force Attcak/image 6.png")
+
+untuk tools yang digunakan adalah Burpsuite yang nanti nya akan melakukan input otomatis username dan password kedalam webnya. selain itu harus menyiapkan daftar kata (wordlist) password dan user yang akan dimasukan ke form login
+
+wordlist user
+!["Wordlist untuk username"]("/assets/lib/2026-02-03-Brute Force Attcak/image 2.png")
+
+wordlist password
+!["Wordlist untuk username"]("/assets/lib/2026-02-03-Brute Force Attcak/image 3.png")
+
+untuk cara kerjanya nanti burpsuite akan 
+
+#### Bruter Force Level : Low
+
+untuk tampilan webnya seperti berikut,
+
+dam saat password dan username yang diinput salah maka tampilannya seperti berikut
 
