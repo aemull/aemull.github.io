@@ -48,4 +48,4 @@ untuk cara kerjanya nanti burpsuite akan
 
 Dari hasil pengujian, terlihat terjadi 22 pengujian kombinasi pasword
 
-![tampilan_Hasil_brutfece](/assets/image/2026-02-03-Brute_Force_Attcak/image_hasil.png)
+![tampilan_Hasil_brutfece](/assets/image/2026-02-03-Brute_Force_Attcak/image_7.png)
