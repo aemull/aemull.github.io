@@ -1,6 +1,6 @@
 ---
-title: TITLE
-date: YYYY-MM-DD HH:MM:SS +/-TTTT
+title: Brute Force
+date: 2026-02-04 00.00.00
 categories: [TOP_CATEGORY, SUB_CATEGORY]
-tags: [ksldkww]     # TAG names should always be lowercase
+tags: [brute force]     # TAG names should always be lowercase
 ---
