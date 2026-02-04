@@ -18,28 +18,34 @@ Mencoba Menebak password atau pin seperti diatas sudah termasuk kedalam serangan
 
 ## Percobaan Brute Force Attack Di DVWA
 
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_1.png)
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_1.png)
 
 Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password. selanjutnya kita akan mecoba setiap level untuk melihat celah keamananya
 
-untuk tampilan jika gagal login seperti berikutS
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_4.png)
+untuk tampilan jika gagal login seperti berikut
+
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_4.png)
 
 untuk tampilan jika berhasil login seperti berikut
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_5.png)
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_6.png)
+
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_5.png)
+
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_6.png)
 
 untuk tools yang digunakan adalah Burpsuite yang nanti nya akan melakukan input otomatis username dan password kedalam webnya. selain itu harus menyiapkan daftar kata (wordlist) password dan user yang akan dimasukan ke form login
 
 wordlist user
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_2.png)
+
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_2.png)
+
 wordlist password
-![tampilan modul brute force](https://github.com/aemull/aemull.github.io/blob/main/image/2026-02-03-Brute_Force_Attcak/image_3.png)
+
+![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_3.png)
+
 untuk cara kerjanya nanti burpsuite akan 
 
 #### Bruter Force Level : Low
 
-untuk tampilan webnya seperti berikut,
+Dari hasil pengujian, terlihat terjadi 22 pengujian kombinasi pasword
 
-dam saat password dan username yang diinput salah maka tampilannya seperti berikut
-
+![tampilan_Hasil_brutfece](/assets/image/2026-02-03-Brute_Force_Attcak/image_hasil.png)
