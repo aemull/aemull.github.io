@@ -140,3 +140,5 @@ $data = $db->prepare( 'SELECT * FROM users WHERE user = (:user) AND password = (
 $data->bindParam( ':user', $user, PDO::PARAM_STR);
 $data->bindParam( ':password', $pass, PDO::PARAM_STR );
 ```
+
+dan untuk percobaannya terhenti dari awal jadi semuanya error.
