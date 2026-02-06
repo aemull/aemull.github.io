@@ -5,9 +5,6 @@ categories: [Pentest]
 tags: [brute force, cyber security, red team]
 ---
 
-
-# **BRUTE FORCE ATTCAK**
-
 ## Apa itu Brute Force Attack ?
 
 ***Brute Force Attack*** adalah serangan yang mencoba menebak kredensial (seperti password, pin, atau kunci enkripsi) dengan cara mencoba semua kombinasi kemungkinan sampai menemukan yang benar.

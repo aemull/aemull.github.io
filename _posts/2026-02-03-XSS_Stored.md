@@ -5,8 +5,6 @@ categories: [Pentest]
 tags: [XSS, cyber security, red team]
 ---
 
-# **XSS STORED**
-
 XSS Stored (Persistent XSS) adalah jenis serangan Cross-Site Scripting di mana skrip berbahaya yang disuntikkan oleh penyerang disimpan secara permanen di server aplikasi web (misalnya di database, komentar, forum, profil pengguna, dll.), dan kemudian dieksekusi otomatis ketika korban mengakses halaman yang menampilkan data tersebut.
 
 ## **Cara Kerja XSS Stored:**
