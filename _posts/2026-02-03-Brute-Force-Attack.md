@@ -15,29 +15,29 @@ Peretas biasanya menggunakan tools otomatis agar bisa melakukan input ratusan ri
 
 ## Percobaan Brute Force Attack Di DVWA
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_1.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_1.png)
 
 Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password. selanjutnya kita akan mecoba setiap level untuk melihat celah keamananya
 
 untuk tampilan jika gagal login seperti berikut
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_4.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_4.png)
 
 untuk tampilan jika berhasil login seperti berikut
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_5.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_5.png)
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_6.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_6.png)
 
 untuk tools yang digunakan adalah Burpsuite, yang nantinya akan melakukan input otomatis username dan password kedalam webnya. selain itu kita harus menyiapkan daftar kata (wordlist) password dan user yang akan dimasukan ke form login
 
 **wordlist user**
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_2.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_2.png)
 
 **wordlist password**
 
-![tampilan modul brute force](/assets/image/2026-02-03-Brute_Force_Attcak/image_3.png)
+![tampilan modul brute force](/assets/2026-02-03-Brute_Force_Attcak/image_3.png)
 
 untuk pengujian disemua level dilakukan dengan cara dan data yang sama
 
@@ -45,11 +45,11 @@ untuk pengujian disemua level dilakukan dengan cara dan data yang sama
 
 Dari hasil pengujian, terlihat ada 22 pengujian kombinasi pasword
 
-![tampilan_Hasil_brutfece](/assets/image/2026-02-03-Brute_Force_Attcak/image_7.png)
+![tampilan_Hasil_brutfece](/assets/2026-02-03-Brute_Force_Attcak/image_7.png)
 
 karena semua status *200 (Success)*, maka salah satu cara untuk melihat keberhasilannya adalah dari *lengt*, karena jiga berhasil login halaman web akan menampilkan gambar yang secara tidak langsung ukuran *lengt* nya juga lebih besar
 
-![hasil_sort_lengt](/assets/image/2026-02-03-Brute_Force_Attcak/image_8.png)
+![hasil_sort_lengt](/assets/2026-02-03-Brute_Force_Attcak/image_8.png)
 
 terlihat bahwa kombinasi ***admin*** dengan ***password*** dan ***pablo*** dengan ***letmein*** memiliki ukuran yang berbeda dari hasil lainnya, ini bisa dijadikan indikasi bahwa password tersebut benar 
 
@@ -90,7 +90,7 @@ hal lainnya adalah tidak adanya penerapan *Rate Limit*, atau batasan jumlah requ
 
 dari hasilnya tetap sama, password berhasil dikenali dan proses brute force berjalan lancar meskipun tidak secepat sebelumnya.
 
-![hasil_short_lengt_medium](/assets/image/2026-02-03-Brute_Force_Attcak/image_9.png)
+![hasil_short_lengt_medium](/assets/2026-02-03-Brute_Force_Attcak/image_9.png)
 
 kalau dilihat dari sruktur kodenya, sudah ditambahkan `mysqli_real_escape_string()` untuk mencegah adanya carater selain aphabet dan number masuk. jadi lebih aman dari serangan sql injection
 
@@ -127,7 +127,7 @@ $lockout_time       = 15;   // Lockout dalam menit
 $account_locked     = false;
 ```
 
-![hasil_short_lengt_medium](/assets/image/2026-02-03-Brute_Force_Attcak/image_10.png)
+![hasil_short_lengt_medium](/assets/2026-02-03-Brute_Force_Attcak/image_10.png)
 
 sudah ditambahkan juga PDO untuk menjegah dari serangan SQL Injection
 
