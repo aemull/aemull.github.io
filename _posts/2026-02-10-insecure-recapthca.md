@@ -103,7 +103,6 @@ curl 'http://localhost:4280/vulnerabilities/captcha/' \
 
 Level **High** menunjukkan kesalahan klasik: **development code yang tidak dihapus**. Terdapat kondisi **OR** yang memungkinkan bypass jika salah satu kondisi terpenuhi.
 
-**Cuplikan kode:**
 ```php
 $resp = recaptcha_check_answer(...);
 
@@ -134,6 +133,111 @@ curl 'http://localhost:4280/vulnerabilities/captcha/' \
 
 ![Bypass dengan Backdoor](/assets/2026-02-10-Insecure-recaptcha/image7.png)  
 ![Sukses Ganti Password](/assets/2026-02-10-Insecure-recaptcha/image8.png)
+
+### **Level Impossible**
+
+Pada level Impossible, implementasi CAPTCHA sudah dilakukan dengan pendekatan yang benar dan mengikuti praktik keamanan aplikasi web modern. Verifikasi CAPTCHA tidak berdiri sendiri, tetapi menjadi bagian dari proses perubahan password secara keseluruhan.
+
+```php
+if( isset( $_POST[ 'Change' ] ) ) {
+    // Check Anti-CSRF token
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+    
+    // Get and sanitize input
+    $pass_new  = $_POST[ 'password_new' ];
+    $pass_new  = stripslashes( $pass_new );
+    $pass_new  = mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass_new );
+    $pass_new  = md5( $pass_new );
+    
+    // Check CAPTCHA
+    $resp = recaptcha_check_answer(
+        $_DVWA[ 'recaptcha_private_key' ],
+        $_POST['g-recaptcha-response']
+    );
+    
+    if( !$resp ) {
+        echo "The CAPTCHA was incorrect.";
+        $hide_form = false;
+    }
+    else {
+        // Verify current password with prepared statement
+        $data = $db->prepare( 'SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
+        $data->bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+        $data->bindParam( ':password', $pass_curr, PDO::PARAM_STR );
+        $data->execute();
+        
+        if( ( $pass_new == $pass_conf) && ( $data->rowCount() == 1 ) ) {
+            // Update with prepared statement
+            $data = $db->prepare( 'UPDATE users SET password = (:password) WHERE user = (:user);' );
+            $data->bindParam( ':password', $pass_new, PDO::PARAM_STR );
+            $data->bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+            $data->execute();
+            
+            echo "Password Changed.";
+        }
+    }
+}
+```
+
+Berbeda dengan level sebelumnya, pada level Impossible CAPTCHA diintegrasikan dengan mekanisme keamanan lain sehingga tidak bisa dibypass dengan manipulasi request sederhana. Beberapa kontrol keamanan yang digunakan:
+
+1. Verifikasi CAPTCHA dan perubahan password dilakukan dalam satu proses, bukan dipisah menjadi beberapa step.
+
+2. Sistem menggunakan Anti-CSRF token untuk memastikan request benar-benar berasal dari user yang sah.
+
+```php
+    // Check Anti-CSRF token
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+```
+
+3. Prepared statements (PDO) pada query database untuk mencegah SQL Injection.
+
+```php
+if( ( $pass_new == $pass_conf) && ( $data->rowCount() == 1 ) ) {
+    // Update with prepared statement
+    $data = $db->prepare( 'UPDATE users SET password = (:password) WHERE user = (:user);' );
+    $data->bindParam( ':password', $pass_new, PDO::PARAM_STR );
+    $data->bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+    $data->execute();
+    echo "Password Changed.";
+```
+
+4. Semua input difilter dan di-escape sebelum diproses.
+
+```php
+    // Get and sanitize input
+    $pass_new  = $_POST[ 'password_new' ];
+    $pass_new  = stripslashes( $pass_new );
+    $pass_new  = mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass_new );
+    $pass_new  = md5( $pass_new );
+```
+
+5. User harus memasukkan password saat ini sebelum dapat mengganti password.
+
+```php
+$data = $db->prepare( 'SELECT password FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
+$data->bindParam( ':user', dvwaCurrentUser(), PDO::PARAM_STR );
+$data->bindParam( ':password', $pass_curr, PDO::PARAM_STR );
+$data->execute();
+```
+
+6. Server memverifikasi response CAPTCHA langsung ke layanan reCAPTCHA, bukan hanya mengandalkan data dari client.
+
+```php
+    // Check CAPTCHA
+    $resp = recaptcha_check_answer(
+        $_DVWA[ 'recaptcha_private_key' ],
+        $_POST['g-recaptcha-response']
+    );
+    
+    if( !$resp ) {
+        echo "The CAPTCHA was incorrect.";
+        $hide_form = false;
+    }
+```
+
+7. Tidak ada parameter dari sisi klien yang dipercaya begitu saja. Semua divalidasi ulang di server.
+
 
 ---
 
