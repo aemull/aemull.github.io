@@ -1,5 +1,5 @@
 ---
-title: "INSECURE RECAPTCHA: Identifikasi dan Eksploitasi"
+title: "INSECURE RECAPTCHA"
 date: 2026-02-05 00:00:00
 categories: [Pentest, Web Security]
 tags: [reCAPTCHA, Cyber Security, Red Team, DVWA]
