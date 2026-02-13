@@ -1,8 +1,8 @@
 ---
-title: "INSECURE RECAPTCHA"
+title: INSECURE RECAPTCHA
 date: 2026-02-05 00:00:00
 categories: [Pentest, Web Security]
-tags: [reCAPTCHA, Cyber Security, Red Team, DVWA]
+tags: [recaptcha, cyber security, red team, dvwa]
 ---
 
 ## **PENJELASAN INSECURE RECAPTCHA**
