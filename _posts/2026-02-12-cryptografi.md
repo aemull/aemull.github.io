@@ -2,7 +2,7 @@
 title: CRYPTOGRAFI
 date: 2026-02-012 00:00:00
 categories: [Pentest, Web Security]
-tags: [cryptografi, cyber Security, red team, dvwa]
+tags: [cryptografi, cyber security, red team, dvwa]
 ---
 
 ## DVWA Cryptography 
