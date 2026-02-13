@@ -2,7 +2,7 @@
 title: AUTORISATION BYPASS
 date: 2026-02-06 00.00.00
 categories: [Pentest]
-tags: [Authorisation, cyber security, red team]
+tags: [authorisation, cyber security, red team]
 ---
 
 ## **Mengenai Autorisation Bypass**
