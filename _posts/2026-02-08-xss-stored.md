@@ -10,7 +10,7 @@ tags: [xss, cyber security, red team]
 Cross-Site Scripting (XSS) Stored adalah kerentanan keamanan di mana skrip berbahaya dimasukan melalui input pengguna dan disimpan secara permanen di database/server. Berbeda dengan Reflected XSS yang hanya sementara, Stored XSS akan menginfeksi semua pengguna yang mengakses halaman yang sudah terkontaminasi skrip berbahaya tadi.
 
 Flow dari serangan :
-![bagan_xss_stored](assets/2026-02-08-xss-stored/deepseek_mermaid_20260209_ba3ea3.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/deepseek_mermaid_20260209_ba3ea3.png)
 
 Karakteristik utama:
 * Payload disimpan permanen di database.
@@ -28,11 +28,11 @@ Dampak:
 
 pada DVWA disediakan modul yang rentan terhadap xss stored. untuk tampilannya dalah berupa form untuk input nama dan pesan teks
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image1.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image1.png)
 
 disini tujuan utama kita adalah untuk redirect user ke halaman web yang kita tentukan, disini saya akan melakukan redirecting ke halaman web ecomerce shopee
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image2.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image2.png)
 
 
 ### Level Low
@@ -58,11 +58,11 @@ contoh serangannya adalah saat penyerang menyisipkan file javascript kedalam kol
 
 maka setiap user yang melihat massage tersebut akan diredirect ke halaman lain. Tapi sebelum dimasukan, terlebih dahulu kita harus menambah jumlah ukuran dari form input name karena defaultnya hanya diset di 10 karakter saja.
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image3.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image3.png)
 
 jadi nanti script diatas bisa dimasukan 
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image4.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image4.png)
 
 dan saat ada user membuka page tersebut, maka akan otomatis diredirect
 
@@ -87,11 +87,11 @@ untuk percobaanya masih sama seperti diatas, kita mengubah dulu ukuran jumlah ka
 <SCRIPT>alert(document.cookie);</SCRIPT>
 ```
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image5.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image5.png)
 
 dan kalu kita input ke form massage, maka kode tidak akan tereksekusi karena sudah terfilter sebelumnya
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image6.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image6.png)
 
 
 ### Level High
@@ -117,13 +117,13 @@ contoh yang bisa diinputkan adalah seperti berikut
 
 untuk pecobaanya masih sama dengan mengubah ukuran banyak karakter yang bisa diinputkan menggunakan developer tool. selanjutnya inputkan script diatas ke dalam form name, dan script akan disimpan diserver
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image8.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image8.png)
 
 jika diisi di form massage, maka scriptnya akan hilang
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image7.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image7.png)
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image9.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image9.png)
 
 ### Level Impossible
 
@@ -153,9 +153,9 @@ $message = htmlspecialchars( $message );
 $name = htmlspecialchars( $name );
 ```
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image10.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image10.png)
 
-![bagan_xss_stored](assets/2026-02-08-xss-stored/image11.png)
+![bagan_xss_stored](/assets/image/2026-02-08-xss-stored/image11.png)
 
 
 2. Prepared Statements dan Anti-CSRF Token

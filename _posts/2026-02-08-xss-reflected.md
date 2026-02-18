@@ -26,11 +26,11 @@ Kerentanan terjadi karena:
 Di DVWA ada modul khusus untuk XSS Reflected dengan tujuan utamanya adalah untuk mendapatkan Cookie user yang sedang login. Untuk 
 tampilan halamannya hanya ada form inputan untuk nama saja
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image1.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image1.png)
 
 dan bisa dilihat juga saat kita input dan submit kalimat dari form, maka akan muncul juga di url
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image2.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image2.png)
 
 ## **Level Low**
 
@@ -47,7 +47,7 @@ sehingga saat kita memasukan payload yang berisi script javascript di url, makan
 ```
 
 dan hasilnya akan menampilkan alert dengan isinya adalah cookie dari user
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image3.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image3.png)
 
 ## **Level Medium**
 
@@ -59,9 +59,9 @@ $name = str_replace( '<script>', '', $_GET[ 'name' ] );
 
 Saat kita masukan payload misal dengan tag uppercase seperti `<SCRIPT>alert(document.cookie);</SCRIPT>`  , maka ini akan tetap tereksekusi di browser
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image4.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image4.png)
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image5.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image5.png)
 
 dan terlihat hasilnya Cookie user bisa ditampilkan
 
@@ -79,9 +79,9 @@ contohnya untuk nanti payload nya bisa menggunakan tag untuk image
 <img src=x onerror=alert(document.cookie);>
 ```
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image6.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image6.png)
 
-![tampilan-xss](/assets/2026-06-08-XSS-Reflected/image7.png)
+![tampilan-xss](/assets/image/2026-06-08-xss-reflected/image7.png)
 
 
 ## **Level Impossible**
@@ -104,7 +104,7 @@ contoh serangannya adalah sebagai berikut
 ```
 ?name=<script>alert('XSS')</script>&user_token=xxx
 ```
-![token_invalid](/assets/2026-06-08-XSS-Reflected/image8.png)
+![token_invalid](/assets/image/2026-06-08-xss-reflected/image8.png)
 
 **Hasil:** Token invalid, request ditolak
 
@@ -113,6 +113,6 @@ contoh serangannya adalah sebagai berikut
 ```
 ?name=<img src=x onerror=alert('XSS')>&user_token=valid_token
 ```
-![token_invalid](/assets/2026-06-08-XSS-Reflected/image10.png)
+![token_invalid](/assets/image/2026-06-08-xss-reflected/image10.png)
 **Hasil:** Payload di-encode, muncul sebagai teks
 

@@ -7,7 +7,7 @@ tags: [recaptcha, cyber security, red team, dvwa]
 
 ## **PENJELASAN INSECURE RECAPTCHA**
 
-![gambar_recaptcha](/assets/2026-02-10-Insecure-recaptcha/image1.png)
+![gambar_recaptcha](/assets/image/2026-02-10-insecure-recaptcha/image1.png)
 
 **CAPTCHA** (*Completely Automated Public Turing test to tell Computers and Humans Apart*) adalah mekanisme keamanan yang dirancang untuk membedakan antara pengguna manusia dan program otomatis (bot). CAPTCHA umumnya ditemukan pada halaman login, registrasi akun, formulir kontak, dan fitur publik lainnya.
 
@@ -32,7 +32,7 @@ Dampak dari kerentanan ini cukup luas, terutama untuk mendukung serangan otomati
 
 **DVWA** (*Damn Vulnerable Web Application*) menyediakan modul **Insecure CAPTCHA** dengan empat level keamanan. Skenario yang digunakan adalah mengganti password pengguna secara otomatis tanpa menyelesaikan tantangan CAPTCHA.
 
-![Ilustrasi Form Change Password](/assets/2026-02-10-Insecure-recaptcha/image4.png)
+![Ilustrasi Form Change Password](/assets/image/2026-02-10-insecure-recaptcha/image4.png)
 
 ---
 
@@ -67,8 +67,8 @@ curl 'http://localhost/dvwa/vulnerabilities/captcha/' \
 
 Hasilnya, password berhasil diubah tanpa melalui CAPTCHA.
 
-![Respons Password Changed](/assets/2026-02-10-Insecure-recaptcha/image5.png)  
-![Validasi Login](/assets/2026-02-10-Insecure-recaptcha/image6.png)
+![Respons Password Changed](/assets/image/2026-02-10-insecure-recaptcha/image5.png)  
+![Validasi Login](/assets/image/2026-02-10-insecure-recaptcha/image6.png)
 
 ---
 
@@ -94,8 +94,8 @@ curl 'http://localhost:4280/vulnerabilities/captcha/' \
   -d 'step=2&password_new=hacked999&password_conf=hacked999&passed_captcha=true&Change=Change'
 ```
 
-![Eksploitasi Level Medium](/assets/2026-02-10-Insecure-recaptcha/image2.png)  
-![Password Berhasil Diubah](/assets/2026-02-10-Insecure-recaptcha/image3.png)
+![Eksploitasi Level Medium](/assets/image/2026-02-10-insecure-recaptcha/image2.png)  
+![Password Berhasil Diubah](/assets/image/2026-02-10-insecure-recaptcha/image3.png)
 
 ---
 
@@ -131,8 +131,8 @@ curl 'http://localhost:4280/vulnerabilities/captcha/' \
   --data 'step=2&password_new=hackedeuy&password_conf=hackedeuy&g-recaptcha-response=hidd3n_valu3&Change=Change'
 ```
 
-![Bypass dengan Backdoor](/assets/2026-02-10-Insecure-recaptcha/image7.png)  
-![Sukses Ganti Password](/assets/2026-02-10-Insecure-recaptcha/image8.png)
+![Bypass dengan Backdoor](/assets/image/2026-02-10-insecure-recaptcha/image7.png)  
+![Sukses Ganti Password](/assets/image/2026-02-10-insecure-recaptcha/image8.png)
 
 ### **Level Impossible**
 

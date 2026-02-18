@@ -26,7 +26,7 @@ Dampak dari kerentanan ini :
 
 # **Percobaan File Inclussion di DVWA**
 
-![tampilan_dvwa_file_inclution](/assets/2026-02-06-file-inclusion/image1.png)
+![tampilan_dvwa_file_inclution](/assets/image/2026-02-06-file-inclusion/image1.png)
 
 Di DVWA disediakan modul File Inclution yang bisa dieskploitasi dengan 4 tingkat kesulitan
 
@@ -49,13 +49,13 @@ Percobaan pertama dilakukan dengan mencoba mengakses file passwd di direktori et
 http://localhost:4280/vulnerabilities/fi/?page=../../../../../../etc/passwd
 ```
 
-![tampilan_dvwa_file_inclution](/assets/2026-02-06-file-inclusion/image2.png)
+![tampilan_dvwa_file_inclution](/assets/image/2026-02-06-file-inclusion/image2.png)
 
 dan hasilnya terlihat paling atas bahwa file passwd bisa dilihat oleh user
 
 atau juga bisa pakai php stream dengan contoh parameternya adalah `?page=data://text/plain,<?php%20phpinfo();?>`
 
-![tampilan_dvwa_file_inclution](/assets/2026-02-06-file-inclusion/image5.png)
+![tampilan_dvwa_file_inclution](/assets/image/2026-02-06-file-inclusion/image5.png)
 
 
 ## **Level Medium**
@@ -70,7 +70,7 @@ $file = str_replace( array( "../", "..\"" ), "", $file );
 
 contoh parameter yang bisa digunakan adalah seperti `?page=....//....//....//....//....//....//etc/passwd` yang jika sudah filter berubah menjadi `?page=../../../../../../etc/passwd` dan bisa dieksekusi oleh server
 
-![tampilan_dvwa_file_inclution](/assets/2026-02-06-file-inclusion/image3.png)
+![tampilan_dvwa_file_inclution](/assets/image/2026-02-06-file-inclusion/image3.png)
 
 dan hasilnya terlihat paling atas untuk file passwd
 
@@ -87,7 +87,7 @@ if( !fnmatch( "file*", $file ) && $file != "include.php" ) {
 
 contohnya dengan parameter `?page=file/../../../../../../etc/passwd`. Kode php akan membaca awalan parameter dan cocok, selanjutnya function `include($file)` akan memprosessnya untuk diimport dan dieksekusi.
 
-![tampilan_hasil_High](/assets/2026-02-06-file-inclusion/image4.png)
+![tampilan_hasil_High](/assets/image/2026-02-06-file-inclusion/image4.png)
 
 Hasilnya terlihat bahwa isi file passwd bisa ditampilkan
 
@@ -114,11 +114,11 @@ if( $file != "include.php" &&
 ```
 dari hasil percobaan menggunakan path travelsal dan remote include pun tidak membuahkan hasil apapun
 
-![hasli_impossible1](/assets/2026-02-06-file-inclusion/image6.png)
-![hasli_impossible1](/assets/2026-02-06-file-inclusion/image7.png)
+![hasli_impossible1](/assets/image/2026-02-06-file-inclusion/image6.png)
+![hasli_impossible1](/assets/image/2026-02-06-file-inclusion/image7.png)
 
 dan saat menggunakan stream juga hasilnya tetap sama
 
-![hasli_impossible1](/assets/2026-02-06-file-inclusion/image8.png)
+![hasli_impossible1](/assets/image/2026-02-06-file-inclusion/image8.png)
 
 jadi untuk pendekatan menggunakan wirhlist yang jelas ini sudah bisa menangani dari file inclution
