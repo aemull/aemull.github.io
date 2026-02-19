@@ -1,7 +1,7 @@
 ---
-title: Brute Force Attack
+title: "DVWA : BRUTE FORCE ATTACK"
 date: 2026-02-04 00.00.00
-categories: [Pentest]
+categories: [Pentest,DVWA]
 tags: [brute force, cyber security, red team]
 ---
 

