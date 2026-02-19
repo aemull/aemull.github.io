@@ -1,5 +1,5 @@
 ---
-title: JAVASCRIPT ATTCAK
+title: "DVWA : JAVASCRIPT ATTACK"
 date: 2026-02-13 00.00.00
 categories: [Pentest]
 tags: [javascript, cyber security, red team]
@@ -21,7 +21,6 @@ Eksploitasi JavaScript (client-side) dalam konteks DVWA ini biasanya mengarah pa
 *   **Bypass Keamanan**: Melewati mekanisme validasi input atau pembuatan token yang seharusnya memastikan pengguna mengirim data yang benar.
 *   **Reverse Engineering**: Memahami algoritma yang digunakan untuk melindungi suatu data, lalu mereproduksinya secara manual.
 *   **Manipulasi Data**: Mengubah data yang dikirim ke server agar sesuai dengan yang diinginkan penyerang.
-
 
 ---
 
@@ -122,7 +121,7 @@ Terakhir Submit form. Server memvalidasi token dan menampilkan pesan sukses.
 
 ### **Level High**
 
-Level High menggunakan obfuskasi JavaScript, sebuah teknik yang mengubah kode menjadi bentuk yang sangat sulit dibaca tanpa mengubah fungsionalitasnya. Pada level ini, dua lapisan obfuskasi telah diterapkan menggunakan Dan's Tools Packer dan JavaScript Obfuscator Tool. Meskipun sangat sulit dibaca secara manual, kode masih dapat dipulihkan menggunakan tools deobfuskasi.
+Level High menggunakan obfuskasi JavaScript, sebuah teknik yang mengubah kode menjadi bentuk yang sangat sulit dibaca tanpa mengubah fungsionalitasnya. Pada level ini, dua lapisan obfuskasi telah diterapkan menggunakan JavaScript Obfuscator Tool. Meskipun sangat sulit dibaca secara manual, kode masih dapat dipulihkan menggunakan tools deobfuskasi.
 
 ```javascript
 
@@ -189,20 +188,54 @@ eval(function(d, e, f, g, h, i) {
     return d;
 }(b('0x7'), 0x3e, 0x137, b('0x8')[b('0x9')]('|'), 0x0, {}));
 ```
-```javascript
 
+Salin seluruh kode JavaScript yang ter-obfuskasi. Kita coba ke situs deobfuskasi seperti [https://thanhle.io.vn/de4js/](https://thanhle.io.vn/de4js/) untuk menjalankan proses deobfuskasi.
 
+![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image9.png)
+
+untuk hasilnya bisa dilihat di file ini [deobfuskasi_result.js](my_tools/deobfuskasi_result.js)
+
+![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image10.png)
+
+Setelah didekode, kita akan melihat struktur kode yang sebenarnya. Hint menyebutkan "tiga fungsi yang harus dipanggil". Jadi dari kode diatas kita mempunyai 3 fungsi utama yaitu :
+
++ `token_part_1`: Memanipulasi string input cara di-reverse
++ `token_part_2`: Menggabungkan hasil fungsi `token_part_1` dengan padding di awal lalu di-hash dengan sha256.
++ `token_part_3`: Menggabungkan hasil fungsi `token_part_2` dengan padding di akhir lalu di-hash dengan sha256.
+
+stelah mengetahui fungsinya, sekarang kita coba generate tokennya, berikut urutannya :
+
+``` javascript
+document.getElementById("phrase").value = 'success';
+
+token_part_1();
+document.getElementById("token").value;
+
+token_part_2(e = 'XX');
+document.getElementById("token").value;
 ```
+> untuk function token_part_2 parameternya diganti dari yang defaultnya `e = YY` menjadi `e = XX` untuk menyesuikan dengan function setTimeout
 
+> untuk function token_part_3 tidak perlu dijalankan diconsole karena nanti dijalankan otomatis saat menekan button Submit
 
-## **5. Kesimpulan**
+![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image11.png)
+
+Terakhir tinggal Submit form dengan token yang telah dibuat.
+
+![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image12.png)
+
+**WELL DONE** untuk level high telah selesai dipecahkan.
+
+## **Kesimpulan**
 
 Modul **JavaScript Attacks** di DVWA mengajarkan kita sebuah prinsip keamanan yang sangat penting:
 
-> **Keamanan tidak boleh bergantung pada kerahasiaan kode client-side (Security by Obscurity).**
+> **Jangan Terlalu Percaya Dengan Client**
 
+Untuk mengamankan aplikasi, logika sensitif seperti validasi dan pembuatan token harus dilakukan di **server-side (back-end)**, di mana pengguna tidak bisa memanipulasinya. Kode JavaScript hanya boleh digunakan untuk meningkatkan pengalaman pengguna, bukan untuk mengamankan data.
+
+kerentanan di beberapa 3 level yang ada, antaralain :
 *   **Low**: Menunjukkan bahwa jika logika ada di client, kita bisa langsung menggunakannya.
 *   **Medium**: Menunjukkan bahwa memisahkan dan meminifikasi kode tidak menghentikan penyerang yang gigih.
 *   **High**: Menunjukkan bahwa meskipun kode diobfusaksi, pada akhirnya ia harus dieksekusi oleh browser, sehingga ia bisa dianalisis dan dimanipulasi. Kode yang sangat terobfuskasi hanya memperlambat, tidak menghentikan, penyerang.
 
-Untuk mengamankan aplikasi, logika sensitif seperti validasi dan pembuatan token harus dilakukan di **server-side (back-end)**, di mana pengguna tidak bisa memanipulasinya. Kode JavaScript hanya boleh digunakan untuk meningkatkan pengalaman pengguna, bukan untuk mengamankan data.

