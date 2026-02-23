@@ -1,8 +1,8 @@
 ---
-title: CRYPTOGRAFI
+title: "DVWA : CRYPTOGRAPHY"
 date: 2026-02-12 00:00:00
 categories: [Pentest, DVWA]
-tags: [cryptografi, cyber security, red team, dvwa]
+tags: [cryptography, cyber security, red team, dvwa]
 ---
 
 ## Intro
@@ -32,54 +32,75 @@ Jika seorang attacker berhasil mengeksploitasi kelemahan kriptografi ini, dampak
 + Modifikasi Data: Attacker bisa mengubah data yang terenkripsi tanpa mengetahui kuncinya, sehingga merusak integritas informasi.
 
 ## DVWA Cryptography 
-Di DVWA ada modul tetang cryptography yang isinya adalah berbagai scenario pengguanaan cryptography yang rentan untuk dieksploit untuk setiap levelnya.
+Di DVWA ada modul tentang cryptography yang isinya adalah berbagai scenario penggunaan cryptography yang rentan untuk dieksploit untuk setiap levelnya.
 
 ### **Level Low**
 
 ![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image3.png)
 
-Pada level Low, aplikasi menggunakan XOR encoding yang disalahpahami sebagai enkripsi. XOR (exclusive OR) adalah operasi bitwise sederhana yang bisa di-reverse dengan mudah jika kita mengetahui plaintext dan ciphertext-nya. Siapapun bisa mengembalikannya ke bentuk asli tanpa key.
+Pada level ini, aplikasi mengklaim dirinya sebagai sistem pesan yang aman. Di halaman utama, tersedia dua fitur utama: Encode dan Decode. Selain itu, halaman ini juga sudah menyediakan sebuah ciphertext yang perlu kita pecahkan:
 
-Untuk yang pertama kita masukkan teks sembarang ke dalam kotak input, misalnya: "selamat pagi". untuk hasilnya adalah berupa teks "`BAQPCRkWGx8TAx4=`". 
+```
+Lg4WGlQZChhSFBYSEB8bBQtPGxdNQSwEHREOAQY=
+```
+
+"You have intercepted the following message, decode it and log in below."
+
+Sistem ini menggunakan XOR encoding yang dilapisi Base64, lalu salah diklaim sebagai "enkripsi". Ini justru kerentanannya — encoding bukan enkripsi. Siapapun bisa membalikkannya tanpa membutuhkan kunci rahasia.
+
+Untuk eksploitasinya, pertama kita coba pahami dulu cara kerjanya dengan memasukkan teks sembarang ke form Encode, misalnya selamat pagi. Hasilnya:
+
+```
+BAQPCRkWGx8TAx4=
+```
+
+Gambar: hasil encode teks "selamat pagi"
+
+Perhatikan outputnya diakhiri tanda = — ini ciri khas Base64. Artinya data di-XOR dulu, baru hasilnya di-encode ke Base64.
+Selanjutnya, kita coba decode kembali teks tadi menggunakan form Decode. Hasilnya kembali menjadi selamat pagi persis seperti semula.
 
 ![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image4.png)
 
-Selanjutnya kita coba untuk decode teks hasil encode tadi. dan hasilnya adalah teks kembali ke "selamat pagi".
+Ini membuktikan prosesnya sepenuhnya reversible tanpa kunci apapun.
+Sekarang kita gunakan form Decode untuk memecahkan ciphertext yang disediakan halaman tadi:
 
-![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image5.png)
+```
+Lg4WGlQZChhSFBYSEB8bBQtPGxdNQSwEHREOAQY=
+```
 
-Disini kita coba pakai form decode dvwa untuk pesan yang hasil intercept. dan hasilnya adalah muncul teks "`Your new password is: Olifant`". kita berhasil meneukan passwornya, selanjutnya pas dicek juga berhasil juga
+Hasilnya muncul pesan: "Your new password is: Olifant"
 
 ![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image6.png)
+
+Kita masukkan password tersebut ke form login, dan berhasil masuk.
+
+Gambar: login berhasil
+
+
+Bonus: Mencari Tahu Kunci XOR-nya
+Kita juga bisa membuktikan kelemahan ini lebih jauh dengan menemukan kunci yang digunakan, menggunakan sifat matematika XOR:
+Ciphertext XOR Plaintext = Key
+Caranya:
+
+Decode Base64 dari output BAQPCRkWGx8TAx4= → hasilnya bytes acak yang tidak terbaca
+XOR bytes tersebut dengan plaintext asli selamat pagi
+
+Hasilnya terlihat key yang digunakan adalah wachtwoordw — dan jika dibandingkan langsung dengan source code DVWA, nilainya identik.
+
 ![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image7.png)
 
+>Pelajaran: Jangan gunakan encoding (Base64/Hex) atau XOR sederhana untuk mengamankan data rahasia. Encoding hanya menyamarkan data, bukan melindunginya. Siapapun yang tahu formatnya bisa langsung membalikkannya.
 
-Kita juga bisa cari tahu key untuk encode-nya. Pertama lihat outputnya, Jika outputnya berakhiran dengan tanda sama dengan (=) atau (==), itu ciri khas Base64. 
-
-```
-BAQPCRkWGx8TAx4=   <--- belakangnya ada tanda =
-```
-
-Sekarang kita coba untuk decode menggunakan tools online (cari "Base64 Decode"), hasilnya adalah teks yang tidak jelas seperti di bawah
-
-![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image8.png)
-
-Jika Base64 tidak menghasilkan teks yang jelas atau aneh, kemungkinan itu adalah XOR Cipher. XOR adalah operasi logika bit. Kita coba dengan melakukan XOR antara plaintext `selamat pagi` dengan `hasil decode base64` tadi. Hasilnya Terlihat key-nya yaitu `wachtwoordw`
-
-![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image9.png)
-
-Keunikannya dari operasi XOR adalah jika Ciphertext XOR Plaintext = Key.
-Dan jika kita bandingkan dengan code di dvwa nya sama
-
-> Pelajaran: Jangan gunakan encoding (Base64/Hex) atau XOR sederhana untuk mengamankan data rahasia. Itu bukan enkripsi!
 
 ### **Level Medium**
 
 ![tampilan_gambar_medium](/assets/image/2026-20-12-cryptography/image1.png)
 
-Level Medium menggunakan AES-128-ECB (Electronic Code Book) yang merupakan mode enkripsi yang lemah. Kelemahan dari ECB adalah setiap blok plaintext dienkripsi satu satu dengan key yang sama, jadi kalau ada plaintext yang sama persis/serupa hasil chipertext nya juga sama.
+Level ini menggunakan AES-128-ECB (Electronic Code Book), algoritma enkripsi yang jauh lebih kuat dari XOR, tapi punya kelemahan di cara kerjanya.
 
-Tujuan kita di level ini adalah untuk memanipulasi session token yang ada agar user Sweep bisa login dengan privilege Admin. Untuk bentuk session tokennya adalah seperti berikut :
+ECB mengenkripsi setiap blok plaintext (16 byte) secara terpisah dan independen menggunakan kunci yang sama. Akibatnya, jika dua blok plaintext identik, ciphertext yang dihasilkan juga pasti identik. Ini memungkinkan kita untuk "memotong" dan "menempel" blok-blok ciphertext dari token yang berbeda untuk memanipulasi isi token tanpa perlu tahu kuncinya sama sekali.
+
+Tujuan kita di level ini adalah login sebagai Sweep dengan hak akses Admin, dengan cara memanipulasi session token. Struktur token yang digunakan berbentuk JSON seperti ini:
 
 ```json
 {
@@ -90,7 +111,7 @@ Tujuan kita di level ini adalah untuk memanipulasi session token yang ada agar u
 }
 ```
 
-Kerentanan yang bisa dimanfaatkan adalah di penggunaan mode ECB, kita bisa langsung memotong dan menempel blok-blok enkripsi dari user yang berbeda untuk memalsukan identitas. Disini data yang kita punya 3 token hex panjang. karena ini aes-128, setipa blok berukuran 16 bytes = 32 karakter Hex. Mari kita potong-potong per 32 karakter.
+Halaman DVWA sudah menyediakan tiga token milik tiga user berbeda dalam format hex. Karena ini AES-128, setiap blok berukuran **16 byte = 32 karakter hex**. Kita potong token-token tersebut per 32 karakter untuk melihat isi tiap bloknya.
 
 **Sooty (admin, expired)**
 
@@ -123,7 +144,8 @@ c9acb1f268c06c5e760a9d728e081fab --> bio
 65e83b9f97e65cb7c7c4b8427bd44abc --> bio
 16daa00fd8cd0105c97449185be77ef5 --> bio
 ```
-selanjutnya adalah membuat token baru untuk Sweep agar bisa login sebagai admin. Kita perlu membuat token yang terdiri dari :
+
+selanjutnya adalah tinggal membuat token baru untuk Sweep agar bisa login sebagai admin. Kita perlu membuat token yang terdiri dari :
 
 ```
 Nama: Sweep (Ambil Blok 1 dari token Sweep)
@@ -152,23 +174,122 @@ Masukkan string panjang hasil gabungan tersebut ke kolom token dan submit.
 
 ![login_berhasil](/assets/image/2026-20-12-cryptography/image2.png)
 
-Bisa dilihat login berhasil sebagai Sweep dengan hak akses Admin.
+Login berhasil sebagai Sweep dengan hak akses Admin, padahal kita tidak pernah tahu password-nya, apalagi kunci enkripsinya.
 
-### Level High
 
-Di sini aplikasi menggunakan AES-128-CBC (Cipher Block Chaining). Ini lebih baik dari ECB, tapi masih rentan.
+### **Level High**
 
->Blom nemu cara decrypt nya wkwkwkwkw
+![Level_high](/assets/image/2026-20-12-cryptography/image10.png)
 
-### Level Impossible
+Level ini menggunakan AES-128-CBC (Cipher Block Chaining) — mode enkripsi yang jauh lebih aman dari ECB. Tidak ada lagi kelemahan "blok identik = ciphertext identik". Tapi CBC punya titik lemah tersendiri: Padding Oracle Attack.
 
-Pada level ini, Sudah menggunkan motede enkripsi yang modern dan paling sulit untuk ditembus
+Berbeda dengan ECB, CBC mengaitkan setiap blok dengan blok sebelumnya melalui operasi XOR sebelum dienkripsi. Prosesnya seperti ini:
++ Enkripsi: 
+    Plaintext di-XOR dengan ciphertext blok sebelumnya (atau IV untuk blok pertama), lalu hasilnya dienkripsi.
++ Dekripsi: 
+    Ciphertext didekripsi, lalu di-XOR dengan ciphertext blok sebelumnya (atau IV) untuk menghasilkan plaintext.
++ Padding: 
+    Karena AES bekerja per blok 16 byte, data yang kurang dari 16 byte akan ditambah padding menggunakan standar PKCS#7, byte padding bernilai sama dengan jumlah byte yang ditambahkan. Contoh: jika kurang 8 byte, maka ditambahkan 0x08 0x08 0x08 0x08 0x08 0x08 0x08 0x08.
 
-* AES-GCM (Galois/Counter Mode): 
-    Tidak menggunakan padding (jadi tidak ada Padding Oracle Attack) dan memiliki fitur integrity check bawaan.
+Kerentanannya bukan di algoritma CBC-nya sendiri, tapi di respons server. Jika server memberikan respons berbeda antara "padding tidak valid" dan "padding valid tapi data salah", penyerang bisa mengeksploitasi perbedaan respons ini untuk mendekripsi data byte per byte tanpa perlu mengetahui kuncinya sama sekali. Inilah yang disebut Padding Oracle Attack.
 
-* Unique IV: 
-    Setiap pesan dienkripsi dengan "bumbu" acak (IV/Nonce) yang berbeda, sehingga pesan yang sama akan memiliki ciphertext yang jauh berbeda.
+Di DVWA level ini, server merespons dengan status 526 jika padding tidak valid, informasi kecil ini yang kita manfaatkan.
 
-* Key Management
-    Kunci tidak di-hardcode di dalam file PHP yang bisa dibaca (idealnya disimpan di Environment Variable atau Hardware Security Module).
+Sekarang tujuan kita adalah mengubah nilai token dari userid:2 menjadi userid:1 untuk mendapatkan akses sebagai admin.
+
+Dari halaman DVWA, kita mendapatkan token dan IV dalam format Base64:
+
+```json
+{
+  "token": "PhQwGVA3q+T2mT+L3Pe5Vg==",
+  "iv": "MTIzNDU2NzgxMjM0NTY3OA=="
+}
+```
+
+Selanjutnya kita download dulu script untuk mengeksploitasi kerentanan ini tersedia langsung di halaman DVWA, di bagian Hints. Download script oracle_attack.php dari sana.
+
+Script ini bekerja dengan cara:
++ Memodifikasi IV byte demi byte dari kanan ke kiri
++ Mengirim IV yang sudah dimodifikasi ke server
++ Membaca respons server — apakah padding valid atau tidak
++ Dari pola respons tersebut, menghitung intermediate state (zeroing array)
++ XOR intermediate state dengan IV asli untuk mendapatkan plaintext
+
+cara menjalankan scriptnya kita tinggal masukan token, iv, dan url request cek token.seperti ini contohnya
+
+```bash
+php oracle_attack.php --iv="MTIzNDU2NzgxMjM0NTY3OA==" --token="PhQwGVA3q+T2mT+L3Pe5Vg==" --url="http://localhost:4280/vulnerabilities/cryptography/source/check_token_high.php" > ./hasil_oracle.txt
+```
+
+Script akan bekerja offset per offset, dari byte paling kanan (offset 15) hingga paling kiri (offset 0):
+```
+Looking at offset 15 for padding 1 → Got hit for: 49
+Looking at offset 14 for padding 2 → Got hit for: 61
+Looking at offset 13 for padding 3 → Got hit for: 61
+...
+Looking at offset 0 for padding 16 → Got hit for: 84
+```
+
+![contoh_hasil](assets/image/2026-20-12-cryptography/image11.png)
+
+Setelah semua 16 offset selesai diproses, script menghitung hasilnya:
+```
+Zeroing array  : 0x44 0x41 0x56 0x46 0x5c 0x52 0x0d 0x0a 0x39 0x3a 0x3b 0x3c 0x3d 0x3e 0x3f 0x30
+Real IV        : 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38
+```
+
+Plaintext berhasil terdekripsi:
+```
+Decrypted string with padding : 0x75 0x73 0x65 0x72 0x69 0x64 0x3a 0x32 0x08 0x08 0x08 0x08 0x08 0x08 0x08 0x08
+Decrypted string without padding : 0x75 0x73 0x65 0x72 0x69 0x64 0x3a 0x32
+Decrypted string as text : userid:2
+```
+
+Terlihat plaintext aslinya adalah `userid:2` dengan **8 byte padding** (`0x08` sebanyak 8 kali) — persis sesuai standar PKCS#7.
+
+**Memanipulasi IV untuk Mengubah Plaintext**
+
+Karena kita sudah tahu **zeroing array** (intermediate state dari dekripsi), kita bisa menghitung IV baru yang akan menghasilkan plaintext apapun yang kita inginkan, menggunakan rumus:
+```
+IV_baru = Zeroing Array XOR Plaintext_yang_diinginkan
+```
+
+Script secara otomatis menghitung ini. Target kita `userid:1`, dan IV baru yang dihasilkan:
+```
+New clear text : userid:1
+New IV         : 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x3b 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38
+```
+
+Perhatikan hanya satu byte yang berubah — dari 0x38 menjadi 0x3b di posisi offset 7. Perubahan kecil di IV, tapi efeknya langsung mengubah plaintext hasil dekripsi dari userid:2 menjadi userid:1.
+
+Script kemudian mengirimkan token lama dengan IV baru ke server, dan responsnya:
+```json
+{
+  "status": 200,
+  "user": "Geoffery",
+  "level": "admin"
+}
+```
+
+Hack success! Token baru yang valid:
+
+```json
+{
+  "token": "PhQwGVA3q+T2mT+L3Pe5Vg==",
+  "iv": "MTIzNDU2NzsxMjM0NTY3OA=="
+}
+```
+
+---
+
+## KESIMPULAN
+
+Cryptography adalah ilmu yang mengubah plaintext (data terbuka) menjadi ciphertext (data terenkripsi) menggunakan algoritma dan kunci, untuk menjaga kerahasiaan, autentikasi, dan integritas data.
+
+Aplikasi menggunakan XOR encoding yang dilapisi Base64, bukan enkripsi sejati. Kelemahan ini membuat proses sepenuhnya reversible tanpa kunci rahasia — siapa pun bisa mendekompresi ciphertext langsung menjadi plaintext.
+
+Mode ECB mengenkripsi setiap blok 16 byte secara independen. Jika dua blok plaintext identik, ciphertext juga identik. Attacker dapat memotong-tempel blok dari token berbeda untuk memanipulasi contents (nama user, role, waktu expiry) tanpa mengetahui kunci enkripsi.
+
+Mode CBC lebih aman dari ECB, tapi punya kelemahan pada padding validation. Server memberi respons berbeda untuk padding invalid vs valid, sehingga attacker bisa melakukan Padding Oracle Attack untuk mendekripsi plaintext byte per byte dan mengkalkulasi IV baru untuk memanipulasi data sesuai keinginan.
+
+

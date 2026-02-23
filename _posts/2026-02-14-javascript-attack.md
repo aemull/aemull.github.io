@@ -193,7 +193,7 @@ Salin seluruh kode JavaScript yang ter-obfuskasi. Kita coba ke situs deobfuskasi
 
 ![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image9.png)
 
-untuk hasilnya bisa dilihat di file ini [deobfuskasi_result.js](my_tools/deobfuskasi_result.js)
+untuk hasilnya bisa dilihat di file ini [deobfuskasi_result.js](/my_tools/deobfuskasi_result.js)
 
 ![gambar_di_js_attack](assets/image/2026-02-14-javascript-attack/image10.png)
 
