@@ -1,5 +1,5 @@
 ---
-title: INSECURE RECAPTCHA
+title: "DVWA : INSECURE RECAPTCHA"
 date: 2026-02-05 00:00:00
 categories: [Pentest, Web Security]
 tags: [recaptcha, cyber security, red team, dvwa]

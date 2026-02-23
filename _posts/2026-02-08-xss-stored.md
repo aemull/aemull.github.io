@@ -1,5 +1,5 @@
 ---
-title: XSS STORED
+title: "DVWA : XSS STORED"
 date: 2026-02-05 00.00.00
 categories: [Pentest]
 tags: [xss, cyber security, red team]

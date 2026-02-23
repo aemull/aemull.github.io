@@ -1,5 +1,5 @@
 ---
-title: AUTORISATION BYPASS
+title: "DVWA : AUTORISATION BYPASS"
 date: 2026-02-06 00.00.00
 categories: [Pentest]
 tags: [authorisation, cyber security, red team]

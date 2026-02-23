@@ -1,5 +1,5 @@
 ---
-title: Weak Session IDs
+title: " DVWA : Weak Session IDs"
 date: 2026-02-17 00.00.00
 categories: [Pentest]
 tags: [Session, cyber security, red team]

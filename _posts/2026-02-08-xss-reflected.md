@@ -1,5 +1,5 @@
 ---
-title: XSS REFLECTED
+title: "DVWA : XSS REFLECTED"
 date: 2026-02-05 00.00.00
 categories: [Pentest]
 tags: [xss, cyber security, red team]

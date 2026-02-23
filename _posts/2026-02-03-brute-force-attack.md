@@ -5,137 +5,186 @@ categories: [Pentest,DVWA]
 tags: [brute force, cyber security, red team]
 ---
 
-## Apa itu Brute Force Attack ?
+## Apa itu Brute Force Attack?
 
-***Brute Force Attack*** adalah serangan yang mencoba menebak kredensial (seperti password, pin, atau kunci enkripsi) dengan cara mencoba semua kombinasi kemungkinan sampai menemukan yang benar.
+**Brute Force Attack** adalah serangan yang mencoba menebak kredensial (seperti password, PIN, atau kunci enkripsi) dengan cara mencoba semua kombinasi kemungkinan sampai menemukan yang benar.
 
-Kurang lebih seperti saat kita ingin login ke google tapi lupa kata sandinya. Disitu kita akan mencoba berbagai kemungkinan password yang bener, mulai dari mencoba input tanggal lahir, alamat, kombinasi tanggal lahir sama nama, kombinasi nama presiden dan mentri, semua kombinasi kalimat yang ada di kepala kita dicoba sampai bisa login.
+Kurang lebih seperti saat kita lupa password Google. Kita akan mulai mencoba berbagai kemungkinan — tanggal lahir, nama hewan peliharaan, kombinasi nama dan angka — sampai salah satunya berhasil. Perbedaannya, peretas menggunakan tools otomatis yang bisa mencoba ratusan ribu hingga jutaan kombinasi dalam hitungan menit. Kalau berhasil, peretas bisa masuk dan mengambil alih akun tersebut.
 
-Peretas biasanya menggunakan tools otomatis agar bisa melakukan input ratusan ribu hingga jutaan kombinasi kalimat dalam waktu yang cepat. Kalau misal peretas itu berhasil menebak password, maka peretas bisa masuk menggunakan akun tersebut dan bisa juga menganmbil alih akun tersebut (*akunnya dicuri*).
+---
 
-## Percobaan Brute Force Attack Di DVWA
+## Percobaan Brute Force Attack di DVWA
+
+DVWA (Damn Vulnerable Web Application) menyediakan modul khusus untuk mencoba serangan Brute Force ke form login yang terdiri dari kolom username dan password.
 
 ![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_1.png)
 
-Di DVWA ada modul untuk mencoba serangan Brute Force ke form login yang terdiri dari username dan password. selanjutnya kita akan mecoba setiap level untuk melihat celah keamananya
+Tampilan ketika login **gagal**:
 
-untuk tampilan jika gagal login seperti berikut
+![tampilan gagal login](/assets/image/2026-02-03-brute-force-attack/image_4.png)
 
-![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_4.png)
+Tampilan ketika login **berhasil**:
 
-untuk tampilan jika berhasil login seperti berikut
+![tampilan berhasil login](/assets/image/2026-02-03-brute-force-attack/image_5.png)
 
-![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_5.png)
+![tampilan berhasil login 2](/assets/image/2026-02-03-brute-force-attack/image_6.png)
 
-![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_6.png)
+### Tools dan Persiapan
 
-untuk tools yang digunakan adalah Burpsuite, yang nantinya akan melakukan input otomatis username dan password kedalam webnya. selain itu kita harus menyiapkan daftar kata (wordlist) password dan user yang akan dimasukan ke form login
+Tools yang digunakan adalah **Burpsuite**, yang bertugas mengirimkan kombinasi username dan password secara otomatis ke form login. Selain itu, kita perlu menyiapkan **wordlist** — yaitu daftar kata berisi kemungkinan username dan password yang akan dicoba.
 
-**wordlist user**
+**Wordlist user:**
 
-![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_2.png)
+![wordlist user](/assets/image/2026-02-03-brute-force-attack/image_2.png)
 
-**wordlist password**
+**Wordlist password:**
 
-![tampilan modul brute force](/assets/image/2026-02-03-brute-force-attack/image_3.png)
+![wordlist password](/assets/image/2026-02-03-brute-force-attack/image_3.png)
 
-untuk pengujian disemua level dilakukan dengan cara dan data yang sama
+Semua pengujian di setiap level dilakukan dengan cara dan data yang sama.
 
-#### Bruter Force Level : Low
 
-Dari hasil pengujian, terlihat ada 22 pengujian kombinasi pasword
+---
 
-![tampilan_Hasil_brutfece](/assets/image/2026-02-03-brute-force-attack/image_7.png)
+## Brute Force Level : Low
 
-karena semua status *200 (Success)*, maka salah satu cara untuk melihat keberhasilannya adalah dari *lengt*, karena jiga berhasil login halaman web akan menampilkan gambar yang secara tidak langsung ukuran *lengt* nya juga lebih besar
+Dari hasil pengujian, terlihat ada 22 kombinasi username dan password yang dicoba.
 
-![hasil_sort_lengt](/assets/image/2026-02-03-brute-force-attack/image_8.png)
+![hasil brute force low](/assets/image/2026-02-03-brute-force-attack/image_7.png)
 
-terlihat bahwa kombinasi ***admin*** dengan ***password*** dan ***pablo*** dengan ***letmein*** memiliki ukuran yang berbeda dari hasil lainnya, ini bisa dijadikan indikasi bahwa password tersebut benar 
+Semua percobaan mengembalikan status **200**, termasuk yang gagal login. Ini terjadi karena server selalu merespons dengan kode 200 baik login berhasil maupun tidak — server tidak membedakan keduanya lewat status HTTP. Lalu bagaimana kita tahu mana yang berhasil?
 
-Bisa dilihat kode di atas tidak memiliki sanitasi sama sekali dalam inputa `$user` dan `$pass`. Hal tersebut bisa dijadikan sebagai celah untuk melakukan *SQL Injection* karena data langsung dimasukan kedalam query. berikut kode yang rentannya
+Caranya adalah dengan melihat kolom **length** (ukuran respons). Ketika login berhasil, halaman web akan menampilkan gambar profil pengguna, sehingga ukuran halamannya otomatis lebih besar dibanding halaman yang hanya menampilkan pesan gagal.
 
+![hasil sort length low](/assets/image/2026-02-03-brute-force-attack/image_8.png)
+
+Terlihat bahwa kombinasi **admin / password** dan **pablo / letmein** memiliki ukuran yang berbeda dari hasil lainnya — ini indikasi kuat bahwa kedua kombinasi tersebut berhasil login.
+
+### Kenapa Level Low Sangat Rentan?
+
+Kalau kita buka tab **View Source** di DVWA, kita bisa melihat kode PHP yang menangani proses login ini. Ada dua masalah besar di sana.
+
+**Masalah pertama: Tidak ada sanitasi input**
+
+```php
+// Get username
+$user = $_GET[ 'username' ];
+
+// Get password
+$pass = $_GET[ 'password' ];
+$pass = md5( $pass );
+
+// Check the database
+$query = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+$result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die(...);
 ```
-    // Get username
-    $user = $_GET[ 'username' ];
 
-    // Get password
-    $pass = $_GET[ 'password' ];
-    $pass = md5( $pass );
+Input dari pengguna langsung dimasukkan ke dalam query database tanpa diperiksa terlebih dahulu. Ini membuka celah untuk serangan **SQL Injection**, di mana penyerang bisa memanipulasi query-nya untuk membobol login tanpa tahu password sama sekali.
 
-    // Check the database
-    $query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
-    $result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+**Masalah kedua: Tidak ada Rate Limiting**
+
+```php
+if( $result && mysqli_num_rows( $result ) == 1 ) {
+    // Login successful
+    echo "<p>Welcome to the password protected area {$user}</p>";
+    echo "<img src=\"{$avatar}\" />";
+} else {
+    // Login failed
+    echo "<pre><br />Username and/or password incorrect.</pre>";
+}
 ```
 
-hal lainnya adalah tidak adanya penerapan *Rate Limit*, atau batasan jumlah request login dalam jangka waktu tertentu. ini bisa mempermudah penyerang untuk melakukan brute force dengan jumlah bercobaan berapapun (*pokonya hajar sampai jebol*). berikut kodenya
+Tidak ada pembatasan jumlah percobaan login. Penyerang bisa mencoba sebanyak apapun tanpa hambatan — istilahnya *hajar sampai jebol*.
 
- if( $result && mysqli_num_rows( $result ) == 1 ) {
-        // Get users details
-        $row    = mysqli_fetch_assoc( $result );
-        $avatar = $row["avatar"];
+---
 
-        // Login successful
-        echo "<p>Welcome to the password protected area {$user}</p>";
-        echo "<img src=\"{$avatar}\" />";
-    }
-    else {
-        // Login failed
-        echo "<pre><br />Username and/or password incorrect.</pre>";
-    }
+## Brute Force Level : Medium
 
-    ((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+Dari hasil pengujian, brute force tetap berhasil. Password tetap bisa dikenali, meskipun prosesnya terasa lebih lambat dari sebelumnya.
 
-#### Brute Force Level : Medium
+![hasil sort length medium](/assets/image/2026-02-03-brute-force-attack/image_9.png)
 
-dari hasilnya tetap sama, password berhasil dikenali dan proses brute force berjalan lancar meskipun tidak secepat sebelumnya.
+### Apa yang Berubah?
 
-![hasil_short_lengt_medium](/assets/image/2026-02-03-brute-force-attack/image_9.png)
+Di level ini, kode sudah diperbaiki di beberapa bagian (bisa dicek di tab **View Source**).
 
-kalau dilihat dari sruktur kodenya, sudah ditambahkan `mysqli_real_escape_string()` untuk mencegah adanya carater selain aphabet dan number masuk. jadi lebih aman dari serangan sql injection
+**Perbaikan pertama: Sanitasi input dengan `mysqli_real_escape_string()`**
 
 ```php
 // Sanitise username input
-    $user = $_GET[ 'username' ];
-    $user = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $user ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
+$user = $_GET[ 'username' ];
+$user = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $user);
 
-    // Sanitise password input
-    $pass = $_GET[ 'password' ];
-    $pass = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $pass ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
-    $pass = md5( $pass );
+// Sanitise password input
+$pass = $_GET[ 'password' ];
+$pass = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $pass);
+$pass = md5( $pass );
 ```
 
-Dan bisa dilihat juga sudah menerapkan sleep selama 2 detik untuk percobaan login yang gagal
+Fungsi ini akan memblokir karakter-karakter khusus yang biasa dipakai untuk SQL Injection. Jadi dari sisi SQL Injection, level ini sudah lebih aman.
+
+**Perbaikan kedua: Delay 2 detik saat login gagal**
 
 ```php
-    else {
-        // Login failed
-        sleep( 2 );
-        echo "<pre><br />Username and/or password incorrect.</pre>";
-    }
+} else {
+    // Login failed
+    sleep( 2 );
+    echo "<pre><br />Username and/or password incorrect.</pre>";
+}
 ```
 
-walapun ada perbaikan tapi belum cukup untuk mencegah adanya brute force
+Setiap kali percobaan login gagal, server akan menunggu 2 detik sebelum merespons. Tujuannya untuk memperlambat penyerang.
 
-#### Brute Force level : Immposible
+### Kenapa Masih Bisa Dibobol?
 
-untuk yang level imposible itu sudah banyak perbaikannya. Mulai dari pembatasan percobaan login sebanyak 3 kali gagal, jika sudah melewati batas tersebut maka akun akan terkunci tidak bisa login selama 15 menit
+Delay 2 detik memang membuat prosesnya lebih lambat, tapi **tidak menghentikan serangan sama sekali**. Burpsuite dengan pengaturan default tetap bisa mengirim request satu per satu dan menunggu respons — waktunya hanya jadi lebih lama. Selama tidak ada batas maksimum percobaan, penyerang cukup sabar dan serangan brute force masih bisa berjalan sampai selesai.
+
+Analoginya seperti memasang palang di pintu tapi tidak menguncinya — penyerang hanya perlu lebih sabar membuka palangnya satu per satu.
+
+---
+
+## Brute Force Level : Impossible
+
+Di level ini, sudah banyak perbaikan signifikan yang membuat brute force benar-benar tidak bisa berjalan.
+
+![hasil impossible](/assets/image/2026-02-03-brute-force-attack/image_10.png)
+
+### Perbaikan 1: Lockout Setelah 3 Kali Gagal
 
 ```php
-$total_failed_login = 3;    // Maksimum percobaan gagal
-$lockout_time       = 15;   // Lockout dalam menit
+$total_failed_login = 3;  // Maksimum percobaan gagal
+$lockout_time       = 15; // Lockout dalam menit
 $account_locked     = false;
 ```
 
-![hasil_short_lengt_medium](/assets/image/2026-02-03-brute-force-attack/image_10.png)
+Jika login gagal sebanyak 3 kali, akun akan dikunci selama 15 menit. Ini langsung memutus kemungkinan brute force karena penyerang tidak bisa terus mencoba tanpa batas.
 
-sudah ditambahkan juga PDO untuk menjegah dari serangan SQL Injection
+### Perbaikan 2: Prepared Statement untuk Mencegah SQL Injection
 
 ```php
 // Prepared statement
-$data = $db->prepare( 'SELECT * FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;' );
-$data->bindParam( ':user', $user, PDO::PARAM_STR);
-$data->bindParam( ':password', $pass, PDO::PARAM_STR );
+$data = $db->prepare('SELECT * FROM users WHERE user = (:user) AND password = (:password) LIMIT 1;');
+$data->bindParam(':user', $user, PDO::PARAM_STR);
+$data->bindParam(':password', $pass, PDO::PARAM_STR);
 ```
 
-dan untuk percobaannya terhenti dari awal jadi semuanya error.
+Dengan menggunakan PDO dan prepared statement, input pengguna tidak lagi bisa memengaruhi struktur query database. SQL Injection sepenuhnya tertutup.
+
+Hasilnya? Semua percobaan langsung error dari awal karena akun terkunci setelah 3 kali gagal.
+
+---
+
+## KESIMPULAN
+
+Brute Force Attack adalah serangan yang mencoba menebak kredensial (password, PIN, hingga kunci enkripsi) dengan cara mencoba semua kombinasi kemungkinan secara otomatis sampai menemukan yang benar.
+
+**Level Low - Tidak Ada Perlindungan:**
+Tidak ada sanitasi input (rentan SQL Injection), tidak ada rate limiting, dan server tidak membedakan respons untuk login berhasil atau gagal (hanya beda ukuran halaman). Penyerang dapat mencoba kombinasi tanpa batas sampai berhasil menemukan password.
+
+**Level Medium - Rate Limiting Lemah:**
+Input sudah disanitasi dengan `mysqli_real_escape_string()` untuk mencegah SQL Injection. Ada delay 2 detik saat login gagal untuk memperlambat serangan. Namun delay ini tidak cukup, hanya membuat serangan lebih lambat, bukan menghentikannya sama sekali.
+
+**Level Impossible - Perlindungan Komprehensif:**
+Menggunakan Account Lockout: akun dikunci 15 menit setelah 3 kali gagal login. Menggunakan Prepared Statement (PDO) untuk mencegah SQL Injection sepenuhnya. Kombinasi kedua perlindungan ini membuat brute force attack tidak bisa dijalankan.
+
+---
