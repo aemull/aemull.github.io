@@ -38,94 +38,111 @@ $cmd = shell_exec( 'ping  -c 4 ' . $target );
 ```
 Pengguna dapat memasukkan apa pun, dan itu akan dieksekusi sebagai bagian dari perintah sistem.
 
-Kita coba untuk masukkan alamat IP, lalu tambahkan karakter pemisah perintah diikuti dengan perintah yang ingin dijalankan. Contoh: `127.0.0.1; whoami`
-  
+Kita coba untuk masukkan alamat IP, lalu tambahkan karakter pemisah perintah diikuti dengan perintah yang ingin dijalankan. Contoh: 
+
+```
+127.0.0.1; whoami
+```
+![gambar_masukin_syntak](assets/image/2026-02-03-command-injection/image2.png) 
+
 Di sini, urutan eksekusi yang terjadi di server adalah: `ping -c 4 127.0.0.1; whoami`. Titik koma (`;`) memungkinkan penyerang untuk menjalankan perintah kedua (`whoami`) setelah perintah pertama (`ping`) selesai, terlepas dari keberhasilan perintah pertama.
 
-Output dari perintah `ping` akan ditampilkan, diikuti oleh output dari perintah `whoami`. Ini membuktikan bahwa kita berhasil mengeksekusi perintah tambahan.
+![output_ping](assets/image/2026-02-03-command-injection/image1.png)
+
+Output dari perintah `ping` akan ditampilkan, diikuti oleh output dari perintah `whoami` yang menghasilkan `www-data`. Ini membuktikan bahwa kita berhasil mengeksekusi perintah tambahan.
 
 
-#### **Level Medium**
+### **Level Medium**
 
-*   **Analisis Kode:**
-    Developer mencoba melakukan filtering dengan membuat **blacklist** sederhana. Developer mengganti string `&&` dan `;` menjadi string kosong.
+Di level medium, terilahat pada aplikasi ping melakukan filtering dengan membuat **blacklist** sederhana dengan mengganti string `&&` dan `;` menjadi string kosong.
 
-    ```php
-    $substitutions = array(
-        '&&' => '',
-        ';'  => '',
-    );
-    $target = str_replace( array_keys( $substitutions ), $substitutions, $target );
-    ```
+```php
+$substitutions = array(
+    '&&' => '',
+    ';'  => '',
+);
+$target = str_replace( array_keys( $substitutions ), $substitutions, $target );
+```
 
-    Namun, pendekatan blacklist ini sangat lemah. Penyerang dapat dengan mudah mencari cara untuk melewatinya.
+Namun, pendekatan blacklist ini sangat lemah. Penyerang dapat dengan mudah mencari cara untuk melewatinya. Salah satu caranya adalah dengan mengganti operator `&&` dan `;` dengan operator yang tidak difilter, misal `&` dan `|`.
 
-*   **Eksploitasi:**
-    1.  Karena `&&` dihapus, kita bisa menggunakan operator lain seperti `&` atau `|`.
-    2.  Operator `&` tidak difilter. Coba payload: `127.0.0.1 & whoami`
-    3.  Operator `|` juga tidak difilter. Coba payload: `127.0.0.1 | whoami`
-    4.  Selain itu, karakter seperti `;` dihapus, tetapi terkadang filtering hanya dilakukan sekali. Coba gunakan payload dengan karakter yang tidak ada dalam blacklist, seperti newline (`%0a`) yang dalam URL encoding setara dengan baris baru.
-        *   Payload (di URL setelah submit): `127.0.0.1%0awhoami` (cara ini mungkin lebih efektif jika aplikasi menerima newline sebagai pemisah perintah).
+Disini kita akan coba dengan menggunakan operator pipe `|` pada payloadnya
+```
+127.0.0.1 | pwd
+```
 
-*   **Hasil:**
-    Payload `127.0.0.1 | whoami` akan berhasil, sama seperti di level Low. Ini menunjukkan bahwa blacklist parsial tidak cukup untuk mengamankan aplikasi.
+![output_ping](assets/image/2026-02-03-command-injection/image3.png)
 
-#### **Level High**
+dan hasilnya akan menampilkan direkotry aktif di server yaitu `/var/www/html/vulnerabilities/exec`
+![output_ping](assets/image/2026-02-03-command-injection/image4.png)
 
-*   **Analisis Kode:**
-    Developer memperluas blacklist dengan menambahkan lebih banyak karakter dan operator yang berbahaya.
+### **Level High**
 
-    ```php
-    $substitutions = array(
-        '||' => '',
-        '&'  => '',
-        ';'  => '',
-        '| ' => '', // Perhatikan spasi setelah '|'
-        '-'  => '',
-        '$'  => '',
-        '('  => '',
-        ')'  => '',
-        '`'  => '',
-    );
-    $target = str_replace( array_keys( $substitutions ), $substitutions, $target );
-    ```
+Di level high, untuk memperluas blacklist ditambahkan lebih banyak karakter dan operator yang berbahaya.
+```php
+$substitutions = array(
+    '||' => '',
+    '&'  => '',
+    ';'  => '',
+    '| ' => '', //   <-- Perhatikan spasi setelah '|'
+    '-'  => '',
+    '$'  => '',
+    '('  => '',
+    ')'  => '',
+    '`'  => '',
+);
+$target = str_replace( array_keys( $substitutions ), $substitutions, $target );
+```
 
-    Sekilas terlihat lebih aman. Namun, ada kelemahan fatal di sini, yaitu pada elemen `'| '`. Blacklist ini hanya menghapus karakter pipe jika **diikuti oleh spasi** (`| `). Jika pipe tidak diikuti spasi, maka tidak akan terfilter.
+Sekilas terlihat lebih aman. Namun, ada kelemahan fatal di sini, yaitu pada elemen `'| '`. Blacklist ini hanya menghapus karakter pipe jika **diikuti oleh spasi** (`| `). Jika pipe tidak diikuti spasi, maka tidak akan terfilter. Selain itu, fungsi `trim()` hanya menghapus spasi di awal dan akhir string, bukan di tengah.
 
-    Selain itu, fungsi `trim()` hanya menghapus spasi di awal dan akhir string, bukan di tengah.
+Kita akan coba memanfaatkan cerlah tersebut dengan memasukan payload dengan `|` tapi tanpa spasi seperti berikut
+```bash
+127.0.0.1|ls
+```
+![output_ping](assets/image/2026-02-03-command-injection/image5.png)
+Karena string `| ` (pipe+spasi) tidak ditemukan, filter tidak akan menghapus apapun. Perintah `whoami` akan dieksekusi dengan outputnya dikirimkan melalui pipe ke perintah selanjutnya (yang tidak ada), sehingga output akan tetap muncul di layar.
 
-*   **Eksploitasi:**
-    1.  Kita manfaatkan celah pada filter `'| '`. Kita akan menggunakan pipe, tetapi tanpa spasi setelahnya.
-    2.  Coba payload: `127.0.0.1|whoami` (tanpa spasi setelah pipe).
-    3.  Karena string `| ` (pipe+spasi) tidak ditemukan, filter tidak akan menghapus apapun. Perintah `whoami` akan dieksekusi dengan outputnya dikirimkan melalui pipe ke perintah selanjutnya (yang tidak ada), sehingga output akan tetap muncul di layar.
+![output_ping](assets/image/2026-02-03-command-injection/image6.png)
+Eksploitasi berhasil.
 
-*   **Hasil:**
-    Eksploitasi berhasil. Ini adalah contoh sempurna bagaimana sebuah kesalahan kecil (typographical error) dalam pembuatan blacklist dapat membuat seluruh pertahanan menjadi tidak berguna.
+### **Level Impossible**
 
-#### **Level Impossible**
+Di level ini, pendekatan berubah total dari **blacklist** menjadi **whitelist**. Developer tidak lagi mencoba menghapus karakter berbahaya, tetapi **memvalidasi input dengan sangat ketat** untuk memastikan input tersebut sesuai dengan format yang diharapkan.
 
-*   **Analisis Kode:**
-    Di level ini, pendekatan berubah total dari **blacklist** menjadi **whitelist**. Developer tidak lagi mencoba menghapus karakter berbahaya, tetapi **memvalidasi input dengan sangat ketat** untuk memastikan input tersebut sesuai dengan format yang diharapkan.
+```php
+$octet = explode( ".", $target );
+if( ( is_numeric( $octet[0] ) ) && ( is_numeric( $octet[1] ) ) && ( is_numeric( $octet[2] ) ) && ( is_numeric( $octet[3] ) ) && ( sizeof( $octet ) == 4 ) ) {
+    $target = $octet[0] . '.' . $octet[1] . '.' . $octet[2] . '.' . $octet[3];
+    // ... execute ping
+```
 
-    1.  **Anti-CSRF Token:** Kode dilindungi dengan token CSRF untuk mencegah serangan yang memanfaatkan sesi pengguna yang sah.
-    2.  **Validasi Ketat:** Input IP dipecah menjadi 4 bagian berdasarkan titik (`.`). Kemudian, kode memeriksa apakah setiap bagian adalah **numerik** dan apakah jumlah bagiannya **tepat 4**. Ini berarti pengguna **hanya bisa** memasukkan angka dan titik dalam format IP yang valid (misal, 192.168.1.1).
-    3.  **Rekonstruksi Aman:** Setelah divalidasi, keempat oktet digabungkan kembali. Proses ini memastikan tidak ada karakter berbahaya yang lolos.
+Disini input IP dipecah menjadi 4 bagian berdasarkan titik (`.`). Kemudian, kode memeriksa apakah setiap bagian adalah **numerik** dan apakah jumlah bagiannya **tepat 4**. Ini berarti pengguna **hanya bisa** memasukkan angka dan titik dalam format IP yang valid (misal, 192.168.1.1).
 
-    ```php
-    $octet = explode( ".", $target );
-    if( ( is_numeric( $octet[0] ) ) && ( is_numeric( $octet[1] ) ) && ( is_numeric( $octet[2] ) ) && ( is_numeric( $octet[3] ) ) && ( sizeof( $octet ) == 4 ) ) {
-        $target = $octet[0] . '.' . $octet[1] . '.' . $octet[2] . '.' . $octet[3];
-        // ... execute ping
-    ```
+Setelah divalidasi, keempat oktet digabungkan kembali. Proses ini memastikan tidak ada karakter berbahaya yang lolos.
 
-*   **Eksploitasi:**
-    **Tidak Mungkin.** Tidak ada celah untuk melakukan Command Injection di level ini. Input selain angka dan titik (dalam format IP yang benar) akan langsung ditolak dan menghasilkan pesan error. Kode tidak akan pernah sampai ke fungsi `shell_exec` dengan input yang tidak valid.
+Tidak ada celah untuk melakukan Command Injection di level ini. Input selain angka dan titik (dalam format IP yang benar) akan langsung ditolak dan menghasilkan pesan error. Kode tidak akan pernah sampai ke fungsi `shell_exec` dengan input yang tidak valid.
 
-### **Kesimpulan**
+![output_ping](assets/image/2026-02-03-command-injection/image7.png)
+![output_ping](assets/image/2026-02-03-command-injection/image8.png)
 
-Modul Command Injection di DVWA dengan sangat baik mengilustrasikan evolusi kerentanan dan perbaikannya.
+---
 
-*   **Low Level** menunjukkan bahaya dari **tanpa validasi** sama sekali.
-*   **Medium Level** menunjukkan bahwa **blacklist parsial** mudah dilewati.
-*   **High Level** menunjukkan bahwa **blacklist yang tidak sempurna** (human error) juga tidak cukup dan bisa dilewati.
-*   **Impossible Level** menunjukkan bahwa **whitelist dengan validasi ketat** adalah pertahanan yang paling efektif untuk mencegah serangan Command Injection. Prinsip utamanya adalah: "Jangan percaya apapun dari pengguna." Selalu validasi input agar sesuai dengan apa yang diharapkan (format IP, email, angka, dll.), bukan hanya mencoba menghapus apa yang dianggap berbahaya.
+## KESIMPULAN
+
+
+Command Injection adalah kerentanan yang memungkinkan penyerang mengeksekusi perintah sistem operasi sewenang-wenang melalui input yang tidak divalidasi, karena aplikasi menganggap input pengguna aman dan langsung meneruskannya ke shell sistem.
+
+**Level Low - Tanpa Validasi:**
+Tidak ada filtering atau validasi sama sekali. Input langsung digabungkan ke perintah shell. Penyerang dapat menggunakan karakter pemisah perintah seperti `;`, `&&`, atau `|` untuk menjalankan perintah tambahan.
+
+**Level Medium - Blacklist Lemah:**
+Menggunakan blacklist untuk menghapus karakter berbahaya seperti `&&` dan `;`. Namun pendekatan ini mudah diobati dengan menggunakan operator alternatif seperti `|` yang tidak difilter.
+
+**Level High - Blacklist yang Lebih Panjang:**
+Blacklist diperluas untuk mencakup lebih banyak karakter berbahaya. Namun masih ada celah kecil, misalnya filtering `| ` (pipe+spasi) tetapi tidak `|` (pipe tanpa spasi), sehingga penyerang masih bisa melewatinya dengan manipulasi format input.
+
+**Level Impossible - Whitelist Validation:**
+Menggunakan pendekatan whitelist yang ketat, hanya menerima input yang sesuai format IP yang valid (empat angka dipisahkan titik). Setiap bagian divalidasi untuk memastikan numerik. Ini adalah cara yang paling aman karena tidak membiarkan karakter berbahaya sama sekali.
+
+
