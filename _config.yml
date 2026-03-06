@@ -98,7 +98,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar: https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnZwZWxwbmlrMTZkMTlobnE3djU1YTlraXc5N3d5NGltbmd6YXc0cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/32fsA8CAvPhKE920zf/giphy.gif #/assets/image/image1.jpeg # string, local or CORS resources
+avatar: https://avatars.githubusercontent.com/u/152836095?v=4 #https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnZwZWxwbmlrMTZkMTlobnE3djU1YTlraXc5N3d5NGltbmd6YXc0cCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/32fsA8CAvPhKE920zf/giphy.gif #/assets/image/image1.jpeg # string, local or CORS resources
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
